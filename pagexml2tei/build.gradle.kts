@@ -30,15 +30,12 @@ buildscript {
 
 dependencies {
     implementation(kotlin("reflect"))
-    implementation("com.github.jsonld-java:jsonld-java:0.13.6")
     implementation("io.ktor:ktor-client-cio:3.0.0")
-    implementation("org.apache.jena:apache-jena:5.5.0")
     implementation("org.apache.logging.log4j:log4j-api-kotlin:1.5.0")
-    implementation("org.apache.logging.log4j:log4j-core:2.23.1")
+    implementation("org.apache.logging.log4j:log4j-core:2.25.3")
     implementation("org.jetbrains.kotlinx:kotlinx-cli-jvm:0.3.6")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
-    implementation("org.json:json:20231013")
 
     // Use JUnit Jupiter for testing.
     testImplementation(libs.junit.jupiter)
