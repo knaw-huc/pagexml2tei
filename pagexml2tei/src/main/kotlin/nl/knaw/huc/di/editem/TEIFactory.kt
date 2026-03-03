@@ -42,6 +42,7 @@ class TEIFactory {
 
     fun fromPageXML(path: String): String {
 //        val errors = mutableListOf<String>()
+        val lines = mutableListOf<String>()
         val builder = DocumentBuilderFactory
             .newInstance()
             .apply { this.isNamespaceAware = true }
@@ -51,22 +52,27 @@ class TEIFactory {
             doc.getNodeSequence("//px:Page")
                 .forEach { itemNode ->
                     val imageFileName = itemNode.getAttributeValue("imageFilename")
-                    logger.info { "imageFileName=$imageFileName" }
+//                    logger.info { "imageFileName=$imageFileName" }
+                    lines.add("<graphic url=\"$imageFileName\"/>")
+                    lines.add("<pb/>")
                     itemNode.getNodeSequence("px:TextRegion")
                         .forEach { textRegion ->
                             val id = textRegion.getAttributeValue("id")
-                            logger.info { "textregion id=$id" }
+//                            logger.info { "textregion id=$id" }
+                            lines.add("<p id=\"$id\">")
                             textRegion.getNodeSequence("px:TextLine")
                                 .forEach { textLine ->
                                     val id = textLine.getAttributeValue("id")
                                     val text = textLine.getString("px:TextEquiv/px:Unicode")
-                                    logger.info { "textLine $id=$text" }
+                                    lines.add(text)
+//                                    logger.info { "textLine $id=$text" }
                                 }
+                            lines.add("</p>")
                         }
                 }
         }
 
-        return ""
+        return lines.joinToString("\n")
     }
 
     private fun Node.getNodeSequence(xpathExpression: String): Sequence<Node> =
