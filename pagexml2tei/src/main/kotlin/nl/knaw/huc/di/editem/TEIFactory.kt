@@ -1,6 +1,7 @@
 package nl.knaw.huc.di.editem
 
 import javax.xml.namespace.NamespaceContext
+import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
@@ -39,27 +40,28 @@ class TEIFactory {
     val xpath: XPath = XPathFactory.newInstance().newXPath().apply {
         namespaceContext = PageXMLNamespaceContext
     }
+    val builder: DocumentBuilder = DocumentBuilderFactory
+        .newInstance()
+        .apply { this.isNamespaceAware = true }
+        .newDocumentBuilder()
 
-    fun fromPageXML(path: String): String {
+    fun fromPageXML(path: String): List<PageData> {
 //        val errors = mutableListOf<String>()
-        val lines = mutableListOf<String>()
-        val builder = DocumentBuilderFactory
-            .newInstance()
-            .apply { this.isNamespaceAware = true }
-            .newDocumentBuilder()
+        val pages = mutableListOf<PageData>()
         logger.info { "<= $path" }
         builder.parse(path).let { doc ->
             doc.getNodeSequence("//px:Page")
                 .forEach { itemNode ->
+                    val lines = mutableListOf<String>()
                     val imageFileName = itemNode.getAttributeValue("imageFilename")
 //                    logger.info { "imageFileName=$imageFileName" }
-                    lines.add("<graphic url=\"$imageFileName\"/>")
-                    lines.add("<pb/>")
+//                    lines.add("<graphic url=\"$imageFileName\"/>")
+//                    lines.add("<pb/>")
                     itemNode.getNodeSequence("px:TextRegion")
                         .forEach { textRegion ->
                             val id = textRegion.getAttributeValue("id")
 //                            logger.info { "textregion id=$id" }
-                            lines.add("<p id=\"$id\">")
+//                            lines.add("<p id=\"$id\">")
                             textRegion.getNodeSequence("px:TextLine")
                                 .forEach { textLine ->
                                     val id = textLine.getAttributeValue("id")
@@ -67,12 +69,14 @@ class TEIFactory {
                                     lines.add(text)
 //                                    logger.info { "textLine $id=$text" }
                                 }
-                            lines.add("</p>")
+//                            lines.add("</p>")
                         }
+                    val pd = PageData(imageFileName ?: "", lines)
+                    pages.add(pd)
                 }
         }
 
-        return lines.joinToString("\n")
+        return pages
     }
 
     private fun Node.getNodeSequence(xpathExpression: String): Sequence<Node> =

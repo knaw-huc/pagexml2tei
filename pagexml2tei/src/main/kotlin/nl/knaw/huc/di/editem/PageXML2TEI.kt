@@ -15,13 +15,14 @@ fun main(args: Array<String>) {
         type = ArgType.String,
         fullName = "pagexml_file",
         description = "The pagexml file to convert"
-
     ).vararg()
     val arguments = if (args.isEmpty()) arrayOf("-h") else args
     parser.parse(arguments)
     val tf = TEIFactory()
-    jsonldPath.forEach { path ->
-        val tei = tf.fromPageXML(path)
-        logger.info { tei }
+    val pageData = jsonldPath.flatMap { path -> tf.fromPageXML(path) }
+    pageData.forEach { pageData ->
+        println(pageData.lines.joinToString("\n"))
+        println()
     }
+
 }
