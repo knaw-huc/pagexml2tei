@@ -6,6 +6,9 @@ val ktorVersion: String by project
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+    maven {
+        url = uri("https://maven.huygens.knaw.nl/repository/")
+    }
 }
 
 plugins {
@@ -40,6 +43,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-cli-jvm:0.3.6")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+
+    implementation("nl.knaw.huygens:visitei:0.6.2")
 
     // Use JUnit Jupiter for testing.
     testImplementation(libs.junit.jupiter)
