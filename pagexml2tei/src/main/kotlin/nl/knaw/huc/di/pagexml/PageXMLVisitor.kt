@@ -80,7 +80,7 @@ class PageXMLVisitor : DelegatingVisitor<PageXMLContext>(PageXMLContext()) {
         }
     }
 
-    class LastChangeHandler : ElementHandler<PageXMLContext> {
+    internal class LastChangeHandler : ElementHandler<PageXMLContext> {
         override fun enterElement(element: Element, context: PageXMLContext): Traversal {
             context.openLayer()
             return NEXT
@@ -92,23 +92,29 @@ class PageXMLVisitor : DelegatingVisitor<PageXMLContext>(PageXMLContext()) {
         }
     }
 
-    class UnicodeHandler : ElementHandler<PageXMLContext> {
+    internal class UnicodeHandler : ElementHandler<PageXMLContext> {
         override fun enterElement(element: Element, context: PageXMLContext): Traversal {
             context.openLayer()
             return NEXT
         }
 
+        @OptIn(ExperimentalAtomicApi::class)
         override fun leaveElement(element: Element, context: PageXMLContext): Traversal {
-            context.unicodeStack.addFirst(context.closeLayer())
+            val text = context.closeLayer()
+            when (context.segmentLevel.first()) {
+                PageXMLContext.SegmentLevel.TEXT_REGION -> context.textRegionUnicodeStack.addFirst(text)
+                PageXMLContext.SegmentLevel.TEXT_LINE -> context.textLineUnicodeStack.addFirst(text)
+                PageXMLContext.SegmentLevel.WORD -> context.wordUnicodeStack.addFirst(text)
+            }
             return NEXT
         }
     }
 
-    class CoordsHandler : ElementHandler<PageXMLContext> {
+    internal class CoordsHandler : ElementHandler<PageXMLContext> {
         @OptIn(ExperimentalAtomicApi::class)
         override fun enterElement(element: Element, context: PageXMLContext): Traversal {
             val coords = element.getAttribute("points").toCoords()
-            when (context.segmentLevel.load()) {
+            when (context.segmentLevel.first()) {
                 PageXMLContext.SegmentLevel.TEXT_REGION -> context.textRegionCoordsStack.addFirst(coords)
                 PageXMLContext.SegmentLevel.TEXT_LINE -> context.textLineCoordsStack.addFirst(coords)
                 PageXMLContext.SegmentLevel.WORD -> context.wordCoordsStack.addFirst(coords)
@@ -121,7 +127,7 @@ class PageXMLVisitor : DelegatingVisitor<PageXMLContext>(PageXMLContext()) {
         }
     }
 
-    class BaselineHandler : ElementHandler<PageXMLContext> {
+    internal class BaselineHandler : ElementHandler<PageXMLContext> {
         override fun enterElement(element: Element, context: PageXMLContext): Traversal {
             context.baselineStack.addFirst(element.getAttribute("points").toBaseline())
             return NEXT
@@ -249,7 +255,7 @@ class PageXMLVisitor : DelegatingVisitor<PageXMLContext>(PageXMLContext()) {
     internal class TextRegionHandler : ElementHandler<PageXMLContext> {
         @OptIn(ExperimentalAtomicApi::class)
         override fun enterElement(element: Element, context: PageXMLContext): Traversal {
-            context.segmentLevel.store(PageXMLContext.SegmentLevel.TEXT_REGION)
+            context.segmentLevel.addFirst(PageXMLContext.SegmentLevel.TEXT_REGION)
             context.textRegionBuilder.apply {
                 reset()
                 id = element.getAttribute("id")
@@ -262,8 +268,10 @@ class PageXMLVisitor : DelegatingVisitor<PageXMLContext>(PageXMLContext()) {
         override fun leaveElement(element: Element, context: PageXMLContext): Traversal {
             context.apply {
                 textRegionBuilder.coords = textRegionCoordsStack.removeFirst()
-                textRegionBuilder.text = if (unicodeStack.isEmpty()) "" else unicodeStack.removeFirst()
+                textRegionBuilder.text =
+                    if (textRegionUnicodeStack.isEmpty()) "" else textRegionUnicodeStack.removeFirst()
                 pageBuilder.textRegions.add(textRegionBuilder.build())
+                segmentLevel.removeFirst()
             }
             return NEXT
         }
@@ -272,7 +280,7 @@ class PageXMLVisitor : DelegatingVisitor<PageXMLContext>(PageXMLContext()) {
     internal class TextLineHandler : ElementHandler<PageXMLContext> {
         @OptIn(ExperimentalAtomicApi::class)
         override fun enterElement(element: Element, context: PageXMLContext): Traversal {
-            context.segmentLevel.store(PageXMLContext.SegmentLevel.TEXT_LINE)
+            context.segmentLevel.addFirst(PageXMLContext.SegmentLevel.TEXT_LINE)
             context.textLineBuilder.apply {
                 reset()
                 id = element.getAttribute("id")
@@ -284,11 +292,11 @@ class PageXMLVisitor : DelegatingVisitor<PageXMLContext>(PageXMLContext()) {
         override fun leaveElement(element: Element, context: PageXMLContext): Traversal {
             context.apply {
                 textLineBuilder.coords = textLineCoordsStack.removeFirst()
-                textLineBuilder.text = if (unicodeStack.isEmpty()) "" else unicodeStack.removeFirst()
+                textLineBuilder.text = if (textLineUnicodeStack.isEmpty()) "" else textLineUnicodeStack.removeFirst()
                 textLineBuilder.baseline = baselineStack.removeFirst()
                 textRegionBuilder.textLines.add(textLineBuilder.build())
+                segmentLevel.removeFirst()
             }
-
             return NEXT
         }
     }
@@ -296,7 +304,7 @@ class PageXMLVisitor : DelegatingVisitor<PageXMLContext>(PageXMLContext()) {
     internal class WordHandler : ElementHandler<PageXMLContext> {
         @OptIn(ExperimentalAtomicApi::class)
         override fun enterElement(element: Element, context: PageXMLContext): Traversal {
-            context.segmentLevel.store(PageXMLContext.SegmentLevel.WORD)
+            context.segmentLevel.addFirst(PageXMLContext.SegmentLevel.WORD)
             context.wordBuilder.apply {
                 reset()
                 id = element.getAttribute("id")
@@ -308,8 +316,9 @@ class PageXMLVisitor : DelegatingVisitor<PageXMLContext>(PageXMLContext()) {
         override fun leaveElement(element: Element, context: PageXMLContext): Traversal {
             context.apply {
                 wordBuilder.coords = wordCoordsStack.removeFirst()
-                wordBuilder.text = unicodeStack.removeFirst()
+                wordBuilder.text = wordUnicodeStack.removeFirst()
                 textLineBuilder.words.add(wordBuilder.build())
+                segmentLevel.removeFirst()
             }
             return NEXT
         }

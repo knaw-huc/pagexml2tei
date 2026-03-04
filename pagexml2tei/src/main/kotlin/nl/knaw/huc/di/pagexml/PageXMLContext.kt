@@ -1,7 +1,5 @@
 package nl.knaw.huc.di.pagexml
 
-import kotlin.concurrent.atomics.AtomicReference
-import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import nl.knaw.huygens.tei.XmlContext
 
 class PageXMLContext : XmlContext() {
@@ -22,14 +20,17 @@ class PageXMLContext : XmlContext() {
     val wordBuilder = PxWord.Builder()
     val metadataItemBuilder = PxMetadataItem.Builder()
 
-    val unicodeStack = ArrayDeque<String>()
+    val textRegionUnicodeStack = ArrayDeque<String>()
+    val textLineUnicodeStack = ArrayDeque<String>()
+    val wordUnicodeStack = ArrayDeque<String>()
+
     val textRegionCoordsStack = ArrayDeque<Coords>()
     val textLineCoordsStack = ArrayDeque<Coords>()
     val wordCoordsStack = ArrayDeque<Coords>()
+
     val baselineStack = ArrayDeque<Baseline>()
 
-    @OptIn(ExperimentalAtomicApi::class)
-    val segmentLevel: AtomicReference<SegmentLevel> = AtomicReference(SegmentLevel.TEXT_REGION)
+    val segmentLevel = ArrayDeque<SegmentLevel>()
 
     val unhandledElements = mutableSetOf<String>()
 

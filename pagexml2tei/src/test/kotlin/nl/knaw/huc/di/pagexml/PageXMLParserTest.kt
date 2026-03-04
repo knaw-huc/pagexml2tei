@@ -10,6 +10,12 @@ class PageXMLParserTest {
         val result = PageXMLParser(pagexmlPath).parse()
         logger.info { result }
         assert(result.pages.size == 1)
+        val wordText =
+            result.pages
+                .flatMap { it.textRegions }
+                .flatMap { it.textLines }
+                .map { it.text }
+        println(wordText.joinToString("\n"))
     }
 
     @Test
