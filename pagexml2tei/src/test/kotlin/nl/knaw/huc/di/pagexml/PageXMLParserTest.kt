@@ -27,4 +27,13 @@ class PageXMLParserTest {
         logger.info { result }
         assert(result.pages.size == 1)
     }
+
+    @Test
+    fun `parse 3599_0072`() {
+        val pagexmlPath = "data/NL-HaNA_1.04.02_3599_0072.xml"
+        val result = PageXMLParser(pagexmlPath).parse()
+        logger.info { result }
+        assert(result.pages.size == 1)
+    }
+
 }

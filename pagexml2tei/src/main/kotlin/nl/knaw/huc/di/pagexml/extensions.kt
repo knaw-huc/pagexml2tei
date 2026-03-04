@@ -1,14 +1,22 @@
 package nl.knaw.huc.di.pagexml
 
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
 import java.util.Date
 
 fun String.toDate(): Date {
-    // Parse as ZonedDateTime first
-    val zdt = ZonedDateTime.parse(this) // ISO_ZONED_DATE_TIME is default
+    val formatter = DateTimeFormatterBuilder()
+        .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        .optionalStart()
+        .appendOffsetId()
+        .optionalEnd()
+        .toFormatter()
+        .withZone(ZoneOffset.UTC) // fallback zone when offset is absent
 
-    // Convert to legacy java.util.Date if needed
-    return Date.from(zdt.toInstant())
+    val odt = OffsetDateTime.parse(this, formatter)
+    return Date.from(odt.toInstant())
 }
 
 fun String.toCoords(): Coords =

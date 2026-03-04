@@ -11,20 +11,54 @@ data class PxMetadata(
     val creator: String,
     val created: Date,
     val lastChange: Date,
-    val transkribusMetadata: TranskribusMetadata
+    val comment: String?,
+    val metadataItems: List<PxMetadataItem>,
+    val transkribusMetadata: TranskribusMetadata?
 ) {
     class Builder {
         var creator: String? = null
         var created: Date? = null
         var lastChange: Date? = null
+        var comment: String? = null
+        val metadataItems = mutableListOf<PxMetadataItem>()
         var transkribusMetadata: TranskribusMetadata? = null
 
         fun build(): PxMetadata = PxMetadata(
             creator = creator!!,
             created = created!!,
             lastChange = lastChange!!,
-            transkribusMetadata = transkribusMetadata!!
+            comment = comment,
+            metadataItems = metadataItems,
+            transkribusMetadata = transkribusMetadata
         )
+    }
+}
+
+data class PxMetadataItem(
+    val type: String,
+    val name: String,
+    val value: String,
+    val labels: Map<String, String>
+) {
+    class Builder {
+        var type: String? = null
+        var name: String? = null
+        var value: String? = null
+        var labels: MutableMap<String, String> = mutableMapOf()
+
+        fun build(): PxMetadataItem = PxMetadataItem(
+            type = type!!,
+            name = name!!,
+            value = value!!,
+            labels = labels
+        )
+
+        fun reset() {
+            type = null
+            name = null
+            value = null
+            labels = mutableMapOf()
+        }
     }
 }
 
@@ -167,6 +201,7 @@ data class PxTextLine(
     val baseline: Baseline,
     val words: List<PxWord>,
     val text: String,
+    val textStyle: TextStyle?
 ) {
     class Builder {
         var id: String? = null
@@ -175,6 +210,7 @@ data class PxTextLine(
         var baseline: Baseline? = null
         var words: MutableList<PxWord> = mutableListOf()
         var text: String? = null
+        var textStyle: TextStyle? = null
 
         fun build(): PxTextLine = PxTextLine(
             id = id!!,
@@ -182,7 +218,8 @@ data class PxTextLine(
             coords = coords!!,
             baseline = baseline!!,
             words = words,
-            text = text!!
+            text = text!!,
+            textStyle = textStyle
         )
 
         fun reset() {
@@ -192,12 +229,17 @@ data class PxTextLine(
             baseline = null
             words = mutableListOf()
             text = null
+            textStyle = null
         }
     }
 }
 
 data class Baseline(
     val points: List<Point>
+)
+
+data class TextStyle(
+    val xHeight: Int
 )
 
 data class PxWord(
