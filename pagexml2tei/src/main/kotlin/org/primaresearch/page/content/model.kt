@@ -344,10 +344,9 @@ data class TextRegion(
     @field:XmlAttribute val production: ProductionSimpleType? = null,
     @field:XmlAttribute val conf: Double? = null,
 
-    @field:XmlElement(
-        name = "TextRegion",
-        namespace = PAGE_NS
-    ) val nestedTextRegions: MutableList<TextRegion> = mutableListOf(),
+    @field:XmlElement(name = "TextRegion", namespace = PAGE_NS)
+    val nestedTextRegions: MutableList<TextRegion> = mutableListOf(),
+
     @field:XmlElement(name = "TextLine", namespace = PAGE_NS) val textLines: MutableList<TextLine> = mutableListOf(),
     @field:XmlElement(name = "TextStyle", namespace = PAGE_NS) val textStyle: TextStyle? = null,
     @field:XmlElement(name = "TextEquiv", namespace = PAGE_NS) val textEquiv: MutableList<TextEquiv> = mutableListOf()
