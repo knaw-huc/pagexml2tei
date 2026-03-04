@@ -33,3 +33,4 @@ private fun String.toPoints(): List<Point> =
     split(" ")
         .map { points -> points.split(",") }
         .map { Point(it[0].toInt(), it[1].toInt()) }
+

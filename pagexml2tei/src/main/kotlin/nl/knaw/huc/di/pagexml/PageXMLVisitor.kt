@@ -18,16 +18,18 @@ class PageXMLVisitor : DelegatingVisitor<PageXMLContext>(PageXMLContext()) {
         setTextHandler(XmlTextHandler())
         setCommentHandler(IgnoreCommentHandler())
         setDefaultElementHandler(UnhandledElementHandler())
-        addElementHandler(DefaultElementHandler(), "PcGts", "Metadata", "TextEquiv", "Labels")
+        addElementHandler(DefaultElementHandler(), "TextEquiv", "Labels")
 
+        addElementHandler(PcGtsHandler(), "PcGts")
+
+        addElementHandler(MetadataHandler(), "Metadata")
         addElementHandler(CreatorHandler(), "Creator")
-        addElementHandler(PxCommentHandler(), "Comment")
-        addElementHandler(PxCommentHandler(), "Comment")
         addElementHandler(CreatedHandler(), "Created")
         addElementHandler(LastChangeHandler(), "LastChange")
-        addElementHandler(TranskribusMetadataHandler(), "TranskribusMetadata")
+        addElementHandler(PxCommentHandler(), "Comment")
         addElementHandler(MetadataItemHandler(), "MetadataItem")
         addElementHandler(LabelHandler(), "Label")
+        addElementHandler(TranskribusMetadataHandler(), "TranskribusMetadata")
 
         addElementHandler(PageHandler(), "Page")
         addElementHandler(TextRegionHandler(), "TextRegion")
@@ -42,6 +44,28 @@ class PageXMLVisitor : DelegatingVisitor<PageXMLContext>(PageXMLContext()) {
         addElementHandler(CoordsHandler(), "Coords")
         addElementHandler(BaselineHandler(), "Baseline")
         addElementHandler(TextStyleHandler(), "TextStyle")
+    }
+
+    internal class PcGtsHandler : ElementHandler<PageXMLContext> {
+        override fun enterElement(element: Element, context: PageXMLContext): Traversal {
+            context.pcgtsId = element.getAttribute("id")
+            return NEXT
+        }
+
+        override fun leaveElement(element: Element, context: PageXMLContext): Traversal {
+            return NEXT
+        }
+    }
+
+    internal class MetadataHandler : ElementHandler<PageXMLContext> {
+        override fun enterElement(element: Element, context: PageXMLContext): Traversal {
+            context.metadataBuilder.externalRef = element.getAttribute("externalRef")
+            return NEXT
+        }
+
+        override fun leaveElement(element: Element, context: PageXMLContext): Traversal {
+            return NEXT
+        }
     }
 
     internal class CreatorHandler : ElementHandler<PageXMLContext> {

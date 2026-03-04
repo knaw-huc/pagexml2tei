@@ -2,9 +2,11 @@ package nl.knaw.huc.di.pagexml
 
 import java.util.Date
 
-data class PcGts(
+data class PxPcGts(
+//    http://www.primaresearch.org/schema/PAGE/gts/pagecontent/2019-07-15/pagecontent.xsd
+    val id: String?,
     val metadata: PxMetadata,
-    val pages: List<PxPage>
+    val page: PxPage
 )
 
 data class PxMetadata(
@@ -13,13 +15,15 @@ data class PxMetadata(
     val lastChange: Date,
     val comment: String?,
     val metadataItems: List<PxMetadataItem>,
-    val transkribusMetadata: TranskribusMetadata?
+    val transkribusMetadata: TranskribusMetadata?,
+    val externalRef: String?
 ) {
     class Builder {
         var creator: String? = null
         var created: Date? = null
         var lastChange: Date? = null
         var comment: String? = null
+        var externalRef: String? = null
         val metadataItems = mutableListOf<PxMetadataItem>()
         var transkribusMetadata: TranskribusMetadata? = null
 
@@ -29,7 +33,8 @@ data class PxMetadata(
             lastChange = lastChange!!,
             comment = comment,
             metadataItems = metadataItems,
-            transkribusMetadata = transkribusMetadata
+            transkribusMetadata = transkribusMetadata,
+            externalRef = externalRef
         )
     }
 }

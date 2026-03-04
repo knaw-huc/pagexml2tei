@@ -8,7 +8,7 @@ class PageXMLParser(val path: String) {
 
     val visitor = PageXMLVisitor()
 
-    fun parse(): PcGts {
+    fun parse(): PxPcGts {
         val xml = Path(path).readText()
         val doc = Document.createFromXml(xml, false)
         doc.accept(visitor)

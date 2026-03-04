@@ -45,7 +45,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
     implementation("nl.knaw.huygens:visitei:0.6.2")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
 
+    runtimeOnly("com.sun.xml.bind:jaxb-impl:3.0.1")
     // Use JUnit Jupiter for testing.
     testImplementation(libs.junit.jupiter)
 

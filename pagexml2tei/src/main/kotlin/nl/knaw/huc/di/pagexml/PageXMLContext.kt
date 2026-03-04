@@ -9,6 +9,7 @@ class PageXMLContext : XmlContext() {
         WORD
     }
 
+    var pcgtsId: String? = null
     val metadataBuilder = PxMetadata.Builder()
     val pages = mutableListOf<PxPage>()
 
@@ -34,10 +35,11 @@ class PageXMLContext : XmlContext() {
 
     val unhandledElements = mutableSetOf<String>()
 
-    fun buildPcGts(): PcGts {
-        return PcGts(
+    fun buildPcGts(): PxPcGts {
+        return PxPcGts(
+            id = pcgtsId,
             metadata = metadataBuilder.build(),
-            pages = pages
+            page = pages.first()
         )
     }
 }
