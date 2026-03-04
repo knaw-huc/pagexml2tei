@@ -225,7 +225,7 @@ data class UnorderedGroup(
         XmlElement(name = "OrderedGroup", namespace = PAGE_NS, type = OrderedGroup::class),
         XmlElement(name = "UnorderedGroup", namespace = PAGE_NS, type = UnorderedGroup::class)
     )
-    val items: MutableList<String> = mutableListOf()
+    val items: MutableList<UnorderedGroupItem> = mutableListOf()
 ) : UnorderedGroupItem()
 
 @Serializable
@@ -241,7 +241,7 @@ data class OrderedGroupIndexed(
         XmlElement(name = "OrderedGroupIndexed", namespace = PAGE_NS, type = OrderedGroupIndexed::class),
         XmlElement(name = "UnorderedGroupIndexed", namespace = PAGE_NS, type = UnorderedGroupIndexed::class)
     )
-    val items: MutableList<String> = mutableListOf()
+    val items: MutableList<OrderedGroupItem> = mutableListOf()
 ) : OrderedGroupItem()
 
 @Serializable
@@ -257,7 +257,7 @@ data class UnorderedGroupIndexed(
         XmlElement(name = "OrderedGroup", namespace = PAGE_NS, type = OrderedGroup::class),
         XmlElement(name = "UnorderedGroup", namespace = PAGE_NS, type = UnorderedGroup::class)
     )
-    val items: MutableList<String> = mutableListOf()
+    val items: MutableList<UnorderedGroupItem> = mutableListOf()
 ) : OrderedGroupItem()
 
 @Serializable
