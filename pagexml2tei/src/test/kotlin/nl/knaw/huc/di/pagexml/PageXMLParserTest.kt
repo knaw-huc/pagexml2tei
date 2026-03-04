@@ -7,6 +7,7 @@ import org.apache.logging.log4j.kotlin.logger
 import org.primaresearch.page.content.PageXMLLoader
 import org.primaresearch.page.content.hasUnicodeTextEquiv
 import org.primaresearch.page.content.points
+import org.primaresearch.page.content.structureType
 
 class PageXMLParserTest {
     @OptIn(ExperimentalSerializationApi::class)
@@ -51,12 +52,12 @@ class PageXMLParserTest {
     fun alternative() {
         val pagexmlPath = "data/NL-HaNA_1.04.02_3599_0072.xml"
         val pcGts = PageXMLLoader.loadFromPath(pagexmlPath)
-        logger.info { pcGts.page.textRegions.first().points() }
+        logger.info { pcGts.page.textRegions.first().points }
         pcGts.page.textRegions
             .asSequence()
             .filter { it.hasUnicodeTextEquiv() }
             .forEach {
-                println(it.id)
+                println("${it.id} ${it.structureType}")
                 println("-".repeat(it.id.length))
                 it.textLines
                     .flatMap { it.textEquiv }

@@ -2,7 +2,7 @@ package org.primaresearch.page.content
 
 import nl.knaw.huc.di.pagexml.Point
 
-fun CoordsType.points(): List<Point> =
+fun CoordsType.pointList(): List<Point> =
     points.trim()
         .split(" ")
         .filter { it.isNotEmpty() }
@@ -11,7 +11,8 @@ fun CoordsType.points(): List<Point> =
             Point(x.toInt(), y.toInt())
         }
 
-fun Region.points(): List<Point> = coords.points()
+val Region.points: List<Point>
+    get() = coords.pointList()
 
 fun TextRegion.hasUnicodeTextEquiv(): Boolean =
     textEquiv
@@ -19,10 +20,18 @@ fun TextRegion.hasUnicodeTextEquiv(): Boolean =
         .joinToString("")
         .isNotBlank()
             ||
-            textLines.any { it.hasUnicodeTextEquiv() }
+            textLines.any { it.hasUnicodeTextEquiv }
 
-fun TextLine.hasUnicodeTextEquiv(): Boolean =
-    textEquiv
+val TextLine.hasUnicodeTextEquiv: Boolean
+    get() = textEquiv
         .mapNotNull { it.unicode }
         .joinToString("")
         .isNotBlank()
+
+const val STRUCTURE_PREFIX = "structure {type:"
+
+val Region.structureType: String?
+    get() = custom
+        ?.takeIf { it.startsWith(STRUCTURE_PREFIX) }
+        ?.removePrefix(STRUCTURE_PREFIX)
+        ?.removeSuffix(";}")
