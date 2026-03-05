@@ -20,4 +20,4 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: (4/4) Run tests
-        run: ./gradlew --info --stacktrace test
+        run: ./gradlew --info --stacktrace --no-configuration-cache test
