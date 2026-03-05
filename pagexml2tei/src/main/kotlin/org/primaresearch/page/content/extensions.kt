@@ -37,6 +37,11 @@ val TextLine.hasUnicodeTextEquiv: Boolean
         .joinToString("")
         .isNotBlank()
 
+val TextLine.text: String
+    get() = textEquiv
+        .mapNotNull { it.unicode }
+        .joinToString("")
+
 const val STRUCTURE_PREFIX = "structure {type:"
 
 val Region.structureType: String?

@@ -5,6 +5,9 @@ import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.vararg
 import org.apache.logging.log4j.kotlin.logger
+import org.primaresearch.page.content.PageXMLLoader
+import org.primaresearch.page.content.hasUnicodeTextEquiv
+import org.primaresearch.page.content.text
 
 val logger = logger("PageXML2TEI")
 
@@ -18,11 +21,22 @@ fun main(args: Array<String>) {
     ).vararg()
     val arguments = if (args.isEmpty()) arrayOf("-h") else args
     parser.parse(arguments)
-    val tf = TEIFactory()
-    val pageData = jsonldPath.flatMap { path -> tf.fromPageXML(path) }
-    pageData.forEach { pageData ->
-        println(pageData.lines.joinToString("\n"))
-        println()
-    }
+
+    val pageData = jsonldPath.map { path -> PageXMLLoader.loadFromPath(path) }
+    pageData
+        .map { it.page }
+        .forEach { page ->
+            println(page.imageFilename)
+            println("=".repeat(page.imageFilename.length))
+            page.textRegions
+                .filter { it.hasUnicodeTextEquiv() }
+                .forEach { textRegion ->
+                    println(textRegion.id)
+                    println("-".repeat(textRegion.id.length))
+                    textRegion.textLines.forEach { textLine -> println(textLine.text) }
+                    println()
+                }
+            println()
+        }
 
 }
