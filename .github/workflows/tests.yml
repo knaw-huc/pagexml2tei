@@ -17,4 +17,4 @@ jobs:
           java-version: '17'
 
       - name: (3/3) Run tests
-        run: ./gradlew test
+        run: gradle test
