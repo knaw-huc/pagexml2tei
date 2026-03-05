@@ -20,6 +20,7 @@ const val PAGE_NS = "http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-0
 @Serializable
 @XmlRootElement(name = "PcGts", namespace = PAGE_NS)
 @XmlAccessorType(XmlAccessType.FIELD)
+/** Page Content - Ground Truth and Storage * */
 data class PcGts(
     @field:XmlElement(name = "Metadata", namespace = PAGE_NS, required = true)
     val metadata: Metadata = Metadata(),
@@ -41,10 +42,11 @@ data class Metadata(
     val creator: String? = null,
 
     @field:XmlElement(name = "Created", namespace = PAGE_NS)
+    // The timestamp has to be in UTC (Coordinated Universal Time) and not local time.
     val created: String? = null,           // xs:dateTime as String; parse with DateTimeFormatter
 
     @field:XmlElement(name = "LastChange", namespace = PAGE_NS)
-    val lastChange: String? = null,
+    val lastChange: String? = null, // The timestamp has to be in UTC (Coordinated Universal Time) and not local time.
 
     @field:XmlElement(name = "Comments", namespace = PAGE_NS)
     val comments: String? = null,
@@ -76,7 +78,9 @@ data class TranskribusMetadata(
 @Serializable
 @XmlAccessorType(XmlAccessType.FIELD)
 data class Page(
+    // Contains the image file name including the file extension.
     @field:XmlAttribute(required = true) val imageFilename: String = "",
+
     @field:XmlAttribute(required = true) val imageWidth: Int = 0,
     @field:XmlAttribute(required = true) val imageHeight: Int = 0,
     @field:XmlAttribute val imageColor: ImageColorSimpleType? = null,
