@@ -1,6 +1,15 @@
 package org.primaresearch.page.content
 
-import nl.knaw.huc.di.pagexml.Point
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.util.Date
+
+data class Point(
+    val x: Int,
+    val y: Int,
+)
 
 fun CoordsType.pointList(): List<Point> =
     points.trim()
@@ -35,3 +44,16 @@ val Region.structureType: String?
         ?.takeIf { it.startsWith(STRUCTURE_PREFIX) }
         ?.removePrefix(STRUCTURE_PREFIX)
         ?.removeSuffix(";}")
+
+fun String.toDate(): Date {
+    val formatter = DateTimeFormatterBuilder()
+        .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        .optionalStart()
+        .appendOffsetId()
+        .optionalEnd()
+        .toFormatter()
+        .withZone(ZoneOffset.UTC) // fallback zone when offset is absent
+
+    val odt = OffsetDateTime.parse(this, formatter)
+    return Date.from(odt.toInstant())
+}

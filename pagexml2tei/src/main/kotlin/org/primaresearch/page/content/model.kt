@@ -20,7 +20,8 @@ const val PAGE_NS = "http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-0
 @Serializable
 @XmlRootElement(name = "PcGts", namespace = PAGE_NS)
 @XmlAccessorType(XmlAccessType.FIELD)
-/** Page Content - Ground Truth and Storage * */
+/** Page Content - Ground Truth and Storage */
+//    http://www.primaresearch.org/schema/PAGE/gts/pagecontent/2019-07-15/pagecontent.xsd
 data class PcGts(
     @field:XmlElement(name = "Metadata", namespace = PAGE_NS, required = true)
     val metadata: Metadata = Metadata(),

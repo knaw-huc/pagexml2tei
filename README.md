@@ -9,4 +9,4 @@
 
 Tool for converting pagexml files to editem-compliant TEI
 
-use `make install` to install in ~/bin/
+use `make install` to install in `~/bin/`
