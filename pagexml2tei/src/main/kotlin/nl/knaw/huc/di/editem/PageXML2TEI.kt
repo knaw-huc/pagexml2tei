@@ -4,12 +4,13 @@ import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.vararg
-import org.apache.logging.log4j.kotlin.logger
 import org.primaresearch.page.content.PageXMLLoader
+import org.primaresearch.page.content.PcGts
 import org.primaresearch.page.content.hasUnicodeTextEquiv
 import org.primaresearch.page.content.text
+import nl.knaw.huc.di.editem.tei.TEIBuilder
 
-val logger = logger("PageXML2TEI")
+//val logger = logger("PageXML2TEI")
 
 @OptIn(ExperimentalCli::class)
 fun main(args: Array<String>) {
@@ -23,6 +24,18 @@ fun main(args: Array<String>) {
     parser.parse(arguments)
 
     val pageData = jsonldPath.map { path -> PageXMLLoader.loadFromPath(path) }
+    val tb = TEIBuilder()
+    val tei = tb.fromPageData(pageData)
+
+//    println("-".repeat(80))
+//    printText(pageData)
+//    println("-".repeat(80))
+    println(tei)
+//    println("-".repeat(80))
+
+}
+
+private fun printText(pageData: List<PcGts>) {
     pageData
         .map { it.page }
         .forEach { page ->
@@ -38,5 +51,4 @@ fun main(args: Array<String>) {
                 }
             println()
         }
-
 }
