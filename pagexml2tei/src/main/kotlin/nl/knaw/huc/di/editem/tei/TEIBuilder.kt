@@ -194,6 +194,7 @@ class TEIBuilder() {
 
     private fun Node.textNode(pcgtsList: List<PcGts>) {
         val parCounter = AtomicInteger(1)
+        val lbCounter = AtomicInteger(1)
         "text" {
             "body" {
                 attribute("divRole", "doc-sections")
@@ -205,18 +206,27 @@ class TEIBuilder() {
                         .forEachIndexed { pageIndex, page ->
                             val pageNum = pageIndex + 1
                             "pb" {
-                                attribute("f", "$pageNum")
-                                attribute("n", "$pageNum")
                                 attribute("xml:id", "pb-orig-$pageNum")
+                                attribute("n", "$pageNum")
+                                attribute("f", "$pageNum")
                                 attribute("facs", "#s$pageNum")
                             }
                             page.textRegions.forEach { tr ->
                                 val parNum = parCounter.getAndIncrement()
                                 "p" {
-                                    attribute("n", parNum)
                                     attribute("xml:id", "p-orig-$parNum")
+                                    attribute("n", parNum)
                                     -"\n"
-                                    -tr.textLines.map { it.text }.joinToString("\n")
+//                                    -tr.textLines.map { it.text }
+//                                        .joinToString("\n")
+                                    tr.textLines.forEach { line ->
+                                        val lineNum = lbCounter.getAndIncrement()
+                                        "lb"{
+                                            attribute("xml:id", "lb-$lineNum")
+                                            attribute("n", lineNum)
+                                        }
+                                        - line.text
+                                    }
                                     -"\n"
                                 }
                             }
